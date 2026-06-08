@@ -3,3 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <title>1960年代新莊地主遊戲</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f1e3c6;
+  text-align: center;
+  padding: 60px;
+}
+.game {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 700px;
+  margin: auto;
+}
+button {
+  display: block;
+  width: 100%;
+  margin: 15px 0;
+  padding: 15px;
+  font-size: 18px;
+}
+</style>
+</head>
+<body>
+
+<div class="game">
+  <h1>1960年代新莊地主人生</h1>
+  <p id="text">
+    你成為了1960年代在新莊擁有農地的地主，請陸續回答下列問題。<br><br>
+    面臨無人願意務農，你會選擇？
+  </p>
+
+  <div id="choices">
+    <button onclick="abandonLand()">A. 荒廢農地</button>
+    <button onclick="rentLand()">B. 租給別人</button>
+  </div>
+</div>
+
+<script>
+function abandonLand() {
+  document.getElementById("text").innerHTML =
+    "恭喜，這塊土地要等到40年後才會迎來都更。<br><br>你會把土地賣給政府嗎？";
+
+  document.getElementById("choices").innerHTML =
+    '<button onclick="sellLand()">A. 會</button>' +
+    '<button onclick="notSellLand()">B. 不會</button>';
+}
+
+function rentLand() {
+  document.getElementById("text").innerHTML = "出現二房東蓋違章工廠。";
+  document.getElementById("choices").innerHTML =
+    '<button onclick="restart()">重新開始</button>';
+}
+
+function sellLand() {
+  document.getElementById("text").innerHTML = "土地增值，賺大錢！";
+  document.getElementById("choices").innerHTML =
+    '<button onclick="restart()">重新開始</button>';
+}
+
+function notSellLand() {
+  document.getElementById("text").innerHTML = "成為釘子戶。";
+  document.getElementById("choices").innerHTML =
+    '<button onclick="restart()">重新開始</button>';
+}
+
+function restart() {
+  location.reload();
+}
+</script>
+
+</body>
+</html>
