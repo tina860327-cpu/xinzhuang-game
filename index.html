@@ -3,33 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <title>1960年代新莊地主遊戲</title>
+
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background: #f1e3c6;
+  margin: 0;
+  font-family: Arial, "Noto Sans TC", sans-serif;
+  background: #efe0c3;
   text-align: center;
-  padding: 60px;
 }
+
 .game {
+  max-width: 800px;
+  margin: 40px auto;
   background: white;
-  padding: 40px;
+  padding: 30px;
   border-radius: 20px;
-  max-width: 700px;
-  margin: auto;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
+
+h1 {
+  color: #5b3a29;
+}
+
+.scene {
+  height: 220px;
+  background: linear-gradient(#9fd3ff, #d8f0ff 45%, #9ccc65 45%, #6b8e23);
+  border-radius: 18px;
+  margin: 25px 0;
+  position: relative;
+  overflow: hidden;
+  font-size: 50px;
+}
+
+.sun {
+  position: absolute;
+  top: 25px;
+  right: 50px;
+  animation: float 3s infinite alternate;
+}
+
+.land {
+  position: absolute;
+  bottom: 25px;
+  width: 100%;
+  animation: fade 1s;
+}
+
+@keyframes float {
+  from { transform: translateY(0); }
+  to { transform: translateY(12px); }
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+#text {
+  font-size: 22px;
+  line-height: 1.7;
+}
+
 button {
   display: block;
   width: 100%;
-  margin: 15px 0;
+  margin: 14px 0;
   padding: 15px;
   font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  background: #8b5a2b;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #6d421f;
+}
+
+.restart {
+  background: #4f7c52;
+}
+
+.note {
+  background: #f7f1e3;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.6;
 }
 </style>
 </head>
+
 <body>
 
 <div class="game">
   <h1>1960年代新莊地主人生</h1>
+
+  <div class="scene">
+    <div class="sun">☀️</div>
+    <div class="land" id="sceneImage">🌾 🌾 🌾 🌾 🌾</div>
+  </div>
+
   <p id="text">
     你成為了1960年代在新莊擁有農地的地主，請陸續回答下列問題。<br><br>
     面臨無人願意務農，你會選擇？
@@ -39,34 +115,73 @@ button {
     <button onclick="abandonLand()">A. 荒廢農地</button>
     <button onclick="rentLand()">B. 租給別人</button>
   </div>
+
+  <div id="note" class="note">
+    歷史提示：1960年代的新莊逐漸受到都市化與工業化影響，農地使用方式開始改變。
+  </div>
 </div>
 
 <script>
+function changeScene(emoji) {
+  var scene = document.getElementById("sceneImage");
+  scene.innerHTML = emoji;
+  scene.style.animation = "none";
+  setTimeout(function() {
+    scene.style.animation = "fade 1s";
+  }, 10);
+}
+
 function abandonLand() {
+  changeScene("🌿 🌿 🏚️ 🌿 🌿");
+
   document.getElementById("text").innerHTML =
     "恭喜，這塊土地要等到40年後才會迎來都更。<br><br>你會把土地賣給政府嗎？";
 
   document.getElementById("choices").innerHTML =
     '<button onclick="sellLand()">A. 會</button>' +
     '<button onclick="notSellLand()">B. 不會</button>';
+
+  document.getElementById("note").innerHTML =
+    "歷史提示：部分農地因人口外移、農業收益下降而逐漸閒置，等待未來都市開發。";
 }
 
 function rentLand() {
-  document.getElementById("text").innerHTML = "出現二房東蓋違章工廠。";
+  changeScene("🏭 💨 🏭 💨 🏭");
+
+  document.getElementById("text").innerHTML =
+    "出現二房東蓋違章工廠。";
+
   document.getElementById("choices").innerHTML =
-    '<button onclick="restart()">重新開始</button>';
+    '<button class="restart" onclick="restart()">重新開始</button>';
+
+  document.getElementById("note").innerHTML =
+    "歷史提示：都市邊緣地帶常因工業需求增加，出現農地轉作工廠或違章建築的情況。";
 }
 
 function sellLand() {
-  document.getElementById("text").innerHTML = "土地增值，賺大錢！";
+  changeScene("🏗️ 🏢 🏢 🏢 🏗️");
+
+  document.getElementById("text").innerHTML =
+    "土地增值，賺大錢！";
+
   document.getElementById("choices").innerHTML =
-    '<button onclick="restart()">重新開始</button>';
+    '<button class="restart" onclick="restart()">重新開始</button>';
+
+  document.getElementById("note").innerHTML =
+    "歷史提示：隨著都市更新與土地開發，原本的農地可能轉變為住宅、道路或公共建設。";
 }
 
 function notSellLand() {
-  document.getElementById("text").innerHTML = "成為釘子戶。";
+  changeScene("🏢 🏚️ 🏢 🏢 🏢");
+
+  document.getElementById("text").innerHTML =
+    "成為釘子戶。";
+
   document.getElementById("choices").innerHTML =
-    '<button onclick="restart()">重新開始</button>';
+    '<button class="restart" onclick="restart()">重新開始</button>';
+
+  document.getElementById("note").innerHTML =
+    "歷史提示：都市更新過程中，地主、政府與開發者之間常會出現土地協商與補償爭議。";
 }
 
 function restart() {
