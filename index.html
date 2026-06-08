@@ -3,22 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <title>1960年代新莊地主遊戲</title>
-
 <style>
 body {
   margin: 0;
   font-family: Arial, "Noto Sans TC", sans-serif;
-  background: #efe0c3;
+  background: linear-gradient(#f7e7c6, #d6b98c);
   text-align: center;
 }
 
 .game {
-  max-width: 800px;
-  margin: 40px auto;
+  max-width: 850px;
+  margin: 35px auto;
   background: white;
   padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  border-radius: 24px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
 h1 {
@@ -26,59 +25,116 @@ h1 {
 }
 
 .scene {
-  height: 220px;
-  background: linear-gradient(#9fd3ff, #d8f0ff 45%, #9ccc65 45%, #6b8e23);
-  border-radius: 18px;
+  height: 260px;
+  background: linear-gradient(#8fd3ff 0%, #cdefff 45%, #7dbb55 45%, #4f8f35 100%);
+  border-radius: 20px;
   margin: 25px 0;
   position: relative;
   overflow: hidden;
-  font-size: 50px;
+  border: 4px solid #8b5a2b;
 }
 
 .sun {
   position: absolute;
-  top: 25px;
-  right: 50px;
-  animation: float 3s infinite alternate;
+  top: 20px;
+  right: 45px;
+  font-size: 55px;
+  animation: sunMove 3s infinite alternate;
+}
+
+.cloud {
+  position: absolute;
+  top: 35px;
+  left: -120px;
+  font-size: 42px;
+  animation: cloudMove 12s linear infinite;
+}
+
+.character {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  font-size: 55px;
+  animation: walk 2s infinite alternate;
 }
 
 .land {
   position: absolute;
-  bottom: 25px;
+  bottom: 35px;
   width: 100%;
-  animation: fade 1s;
+  font-size: 55px;
+  animation: pop 0.8s;
 }
 
-@keyframes float {
-  from { transform: translateY(0); }
-  to { transform: translateY(12px); }
+.effect {
+  position: absolute;
+  top: 100px;
+  width: 100%;
+  font-size: 42px;
+  animation: sparkle 1.2s infinite alternate;
 }
 
-@keyframes fade {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+@keyframes sunMove {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(15px) rotate(20deg); }
+}
+
+@keyframes cloudMove {
+  from { left: -120px; }
+  to { left: 100%; }
+}
+
+@keyframes walk {
+  from { transform: translateX(0) rotate(-5deg); }
+  to { transform: translateX(40px) rotate(5deg); }
+}
+
+@keyframes pop {
+  0% { opacity: 0; transform: scale(0.5); }
+  70% { transform: scale(1.15); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes sparkle {
+  from { opacity: 0.4; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(-15px); }
+}
+
+.shake {
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  50% { transform: translateX(8px); }
+  75% { transform: translateX(-8px); }
+  100% { transform: translateX(0); }
 }
 
 #text {
-  font-size: 22px;
+  font-size: 23px;
   line-height: 1.7;
+  color: #333;
 }
 
 button {
   display: block;
   width: 100%;
   margin: 14px 0;
-  padding: 15px;
-  font-size: 18px;
+  padding: 16px;
+  font-size: 19px;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   background: #8b5a2b;
   color: white;
   cursor: pointer;
+  transition: 0.25s;
 }
 
 button:hover {
   background: #6d421f;
+  transform: scale(1.03);
 }
 
 .restart {
@@ -86,9 +142,9 @@ button:hover {
 }
 
 .note {
-  background: #f7f1e3;
+  background: #fff4d6;
   padding: 15px;
-  border-radius: 12px;
+  border-radius: 14px;
   margin-top: 20px;
   font-size: 16px;
   line-height: 1.6;
@@ -101,8 +157,11 @@ button:hover {
 <div class="game">
   <h1>1960年代新莊地主人生</h1>
 
-  <div class="scene">
+  <div class="scene" id="sceneBox">
     <div class="sun">☀️</div>
+    <div class="cloud">☁️</div>
+    <div class="effect" id="effect"></div>
+    <div class="character" id="character">👨‍🌾</div>
     <div class="land" id="sceneImage">🌾 🌾 🌾 🌾 🌾</div>
   </div>
 
@@ -122,17 +181,30 @@ button:hover {
 </div>
 
 <script>
-function changeScene(emoji) {
+function animateScene(emoji, character, effect, shake) {
   var scene = document.getElementById("sceneImage");
+  var person = document.getElementById("character");
+  var fx = document.getElementById("effect");
+  var box = document.getElementById("sceneBox");
+
   scene.innerHTML = emoji;
+  person.innerHTML = character;
+  fx.innerHTML = effect;
+
   scene.style.animation = "none";
-  setTimeout(function() {
-    scene.style.animation = "fade 1s";
-  }, 10);
+  void scene.offsetWidth;
+  scene.style.animation = "pop 0.8s";
+
+  if (shake) {
+    box.classList.add("shake");
+    setTimeout(function() {
+      box.classList.remove("shake");
+    }, 600);
+  }
 }
 
 function abandonLand() {
-  changeScene("🌿 🌿 🏚️ 🌿 🌿");
+  animateScene("🌿 🌿 🏚️ 🌿 🌿", "😟", "🍂 🍂 🍂", true);
 
   document.getElementById("text").innerHTML =
     "恭喜，這塊土地要等到40年後才會迎來都更。<br><br>你會把土地賣給政府嗎？";
@@ -142,24 +214,11 @@ function abandonLand() {
     '<button onclick="notSellLand()">B. 不會</button>';
 
   document.getElementById("note").innerHTML =
-    "歷史提示：部分農地因人口外移、農業收益下降而逐漸閒置，等待未來都市開發。";
-}
-
-function rentLand() {
-  changeScene("🏭 💨 🏭 💨 🏭");
-
-  document.getElementById("text").innerHTML =
-    "出現二房東蓋違章工廠。";
-
-  document.getElementById("choices").innerHTML =
-    '<button class="restart" onclick="restart()">重新開始</button>';
-
-  document.getElementById("note").innerHTML =
-    "歷史提示：都市邊緣地帶常因工業需求增加，出現農地轉作工廠或違章建築的情況。";
+    "歷史提示：部分農地因務農人口減少、農業收益下降而閒置，等待未來都市開發。";
 }
 
 function sellLand() {
-  changeScene("🏗️ 🏢 🏢 🏢 🏗️");
+  animateScene("🏗️ 🏢 🏢 🏢 🏗️", "🤑", "💰 💰 💰", false);
 
   document.getElementById("text").innerHTML =
     "土地增值，賺大錢！";
@@ -168,11 +227,11 @@ function sellLand() {
     '<button class="restart" onclick="restart()">重新開始</button>';
 
   document.getElementById("note").innerHTML =
-    "歷史提示：隨著都市更新與土地開發，原本的農地可能轉變為住宅、道路或公共建設。";
+    "歷史提示：隨著都市開發與土地重劃，原本的農地可能變成住宅、道路或公共建設。";
 }
 
 function notSellLand() {
-  changeScene("🏢 🏚️ 🏢 🏢 🏢");
+  animateScene("🏢 🏚️ 🏢 🏢 🏢", "😤", "⚠️ ⚠️ ⚠️", true);
 
   document.getElementById("text").innerHTML =
     "成為釘子戶。";
@@ -181,7 +240,47 @@ function notSellLand() {
     '<button class="restart" onclick="restart()">重新開始</button>';
 
   document.getElementById("note").innerHTML =
-    "歷史提示：都市更新過程中，地主、政府與開發者之間常會出現土地協商與補償爭議。";
+    "歷史提示：都市更新過程中，地主、政府與開發者之間常出現土地協商與補償爭議。";
+}
+
+function rentLand() {
+  animateScene("🏭 💨 🏭 💨 🏭", "🤔", "💨 💨 💨", true);
+
+  document.getElementById("text").innerHTML =
+    "出現面對二房東違規出租，你會選擇？";
+
+  document.getElementById("choices").innerHTML =
+    '<button onclick="ignoreSublease()">A. 睜一隻眼閉一隻眼</button>' +
+    '<button onclick="reportSublease()">B. 檢舉二房東</button>';
+
+  document.getElementById("note").innerHTML =
+    "歷史提示：農地出租後，可能因管理鬆散而出現二房東、違章工廠或非法使用。";
+}
+
+function ignoreSublease() {
+  animateScene("🏭 🏭 🏢 💰 🏢", "😎", "💰 ✨ 💰", false);
+
+  document.getElementById("text").innerHTML =
+    "等到都更，新莊發大財！";
+
+  document.getElementById("choices").innerHTML =
+    '<button class="restart" onclick="restart()">重新開始</button>';
+
+  document.getElementById("note").innerHTML =
+    "歷史提示：都市化後，土地價值可能上升，但違章建築與工業污染也可能成為地方問題。";
+}
+
+function reportSublease() {
+  animateScene("📢 🏭 🚫 🏚️", "😭", "❌ ❌ ❌", true);
+
+  document.getElementById("text").innerHTML =
+    "政府沒有取締，少賺多年房租。";
+
+  document.getElementById("choices").innerHTML =
+    '<button class="restart" onclick="restart()">重新開始</button>';
+
+  document.getElementById("note").innerHTML =
+    "歷史提示：違章工廠、土地使用與執法落差，反映都市邊緣發展的複雜性。";
 }
 
 function restart() {
